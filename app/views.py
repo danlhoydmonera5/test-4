@@ -206,30 +206,3 @@ class DonationDeleteView(DeleteView):
     success_url = reverse_lazy('donation_list')
 
 
-@login_required
-def approve_application(request, application_id):
-    if not request.user.is_staff:  # Ensure only admins can approve
-        messages.error(request, "You don't have permission to approve applications.")
-        return redirect('dashboard')
-
-    application = get_object_or_404(AdoptionApplication, id=application_id)
-    application.status = 'Approved'
-    application.approved_by = request.user
-    application.save()
-
-    messages.success(request, f"Application for {application.pet.name} has been approved.")
-    return redirect('adoption_application_list')
-
-
-@login_required
-def reject_application(request, application_id):
-    if not request.user.is_staff:
-        messages.error(request, "You don't have permission to reject applications.")
-        return redirect('dashboard')
-
-    application = get_object_or_404(AdoptionApplication, id=application_id)
-    application.status = 'Rejected'
-    application.save()
-
-    messages.warning(request, f"Application for {application.pet.name} has been rejected.")
-    return redirect('adoption_application_list')
