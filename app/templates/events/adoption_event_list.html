@@ -2,8 +2,8 @@
 
 {% block content %}
   <h1>Adoption Events</h1>
-  {% if authenticate.is_staff %}
-  <a href="{% url 'adoption_event_create' %}" class="btn btn-primary">Add New Event</a>
+  {% if request.user.is_staff %}
+    <a href="{% url 'adoption_event_create' %}" class="btn btn-primary">Add New Event</a>
   {% endif %}
   <table class="table mt-3">
     <thead>
@@ -12,11 +12,10 @@
         <th>Location</th>
         <th>Date</th>
         <th>View</th>
-        {% if authenticate.is_staff %}
-        <th>Edit</th>
-        <th>Delete</th>
+        {% if request.user.is_staff %}
+          <th>Edit</th>
+          <th>Delete</th>
         {% endif %}
-
       </tr>
     </thead>
     <tbody>
@@ -28,13 +27,13 @@
           <td>
             <a href="{% url 'adoption_event_detail' event.pk %}" class="btn btn-info">View</a>
           </td>
-          {% if authenticate.is_staff %}
-          <td>
-             <a href="{% url 'adoption_event_update' event.pk %}" class="btn btn-warning">Edit</a>
-          </td>
-          <td>
-            <a href="{% url 'adoption_event_delete' event.pk %}" class="btn btn-danger">Delete</a>
-          </td>
+          {% if request.user.is_staff %}
+            <td>
+              <a href="{% url 'adoption_event_update' event.pk %}" class="btn btn-warning">Edit</a>
+            </td>
+            <td>
+              <a href="{% url 'adoption_event_delete' event.pk %}" class="btn btn-danger">Delete</a>
+            </td>
           {% endif %}
         </tr>
       {% endfor %}

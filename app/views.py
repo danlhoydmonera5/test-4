@@ -2,7 +2,9 @@ from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Pet , AdoptionApplication, AdoptionEvent,  Donation
-
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 class HomePageView(TemplateView):
     template_name = 'app/home.html'
@@ -47,7 +49,13 @@ class PetUpdateView(UpdateView):
     template_name = 'pets/pet_update.html'
     fields = ['name', 'species', 'breed', 'age', 'gender', 'description', 'photo', 'status']
 
-    success_url = reverse_lazy('pet_list')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pet'] = self.object
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('pet_detail', kwargs={'pk': self.object.pk})
 
 
 # Pet Delete View
@@ -92,7 +100,13 @@ class AdoptionApplicationUpdateView(UpdateView):
     template_name = 'applications/adoption_application_update.html'
     fields = ['pet', 'reason_for_adoption', 'status']
 
-    success_url = reverse_lazy('adoption_application_list')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['application'] = self.object
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('adoption_application_detail', kwargs={'pk': self.object.pk})
 
 # Adoption Application Delete View
 class AdoptionApplicationDeleteView(DeleteView):
@@ -190,3 +204,32 @@ class DonationDeleteView(DeleteView):
     template_name = 'donations/donation_delete.html'
     context_object_name = 'donation'
     success_url = reverse_lazy('donation_list')
+
+
+@login_required
+def approve_application(request, application_id):
+    if not request.user.is_staff:  # Ensure only admins can approve
+        messages.error(request, "You don't have permission to approve applications.")
+        return redirect('dashboard')
+
+    application = get_object_or_404(AdoptionApplication, id=application_id)
+    application.status = 'Approved'
+    application.approved_by = request.user
+    application.save()
+
+    messages.success(request, f"Application for {application.pet.name} has been approved.")
+    return redirect('adoption_application_list')
+
+
+@login_required
+def reject_application(request, application_id):
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to reject applications.")
+        return redirect('dashboard')
+
+    application = get_object_or_404(AdoptionApplication, id=application_id)
+    application.status = 'Rejected'
+    application.save()
+
+    messages.warning(request, f"Application for {application.pet.name} has been rejected.")
+    return redirect('adoption_application_list')

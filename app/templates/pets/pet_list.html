@@ -2,9 +2,9 @@
 
 {% block content %}
   <h1>Pets</h1>
- {% if authenticate.is_staff %}
-  <a href="{% url 'pet_create' %}" class="btn btn-primary">Add New Pet</a>
- {% endif %}
+  {% if request.user.is_staff %}
+    <a href="{% url 'pet_create' %}" class="btn btn-primary">Add New Pet</a>
+  {% endif %}
   <table class="table mt-3">
     <thead>
       <tr>
@@ -14,8 +14,8 @@
         <th>View</th>
         <th>Apply</th>
         {% if request.user.is_staff %}
-        <th>Update</th>
-        <th>Delete</th>
+          <th>Update</th>
+          <th>Delete</th>
         {% endif %}
       </tr>
     </thead>
@@ -43,33 +43,4 @@
       {% endfor %}
     </tbody>
   </table>
-{% if authenticate.is_staff %}
-  <table class="table mt-3">
-    <thead>
-        <tr>
-            <th>Applicant</th>
-            <th>Pet</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for application in applications %}
-        <tr>
-            <td>{{ application.user.username }}</td>
-            <td>{{ application.pet.name }}</td>
-            <td>{{ application.status }}</td>
-            <td>
-                {% if request.user.is_staff and application.status == 'Pending' %}
-                    <a href="{% url 'approve_application' application.id %}" class="btn btn-success">Approve</a>
-                    <a href="{% url 'reject_application' application.id %}" class="btn btn-danger">Reject</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endif %}
-
-
 {% endblock content %}

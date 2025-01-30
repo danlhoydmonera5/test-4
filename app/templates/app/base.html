@@ -41,6 +41,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'donation_list' %}">Donations</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'adoption_application_list' %}">Applications</a>
+                    </li>
                     <!-- Example of adding a login button -->
 
                     <li class="nav-item">
@@ -52,11 +56,12 @@
                         </form>
                     </li>
                     {% else %}
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'signup' %}">Login</a>
+                        <a class="nav-link" href="{% url 'login' %}">login</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Signup</a>
+                                 <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup' %}">signup</a>
                     </li>
                     {% endif %}
                 </ul>

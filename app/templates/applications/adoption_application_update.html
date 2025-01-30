@@ -2,9 +2,10 @@
 
 {% block content %}
   <h1>Update Adoption Application</h1>
-  <form action="{% url 'adoption_application-update' application.pk %}" method="POST">
+  <form action="{% url 'adoption_application_update' application.pk %}" method="POST">
     {% csrf_token %}
 
+    <!-- Pet selection -->
     <div>
       <label for="id_pet">Pet:</label>
       <select id="id_pet" name="pet" required>
@@ -14,15 +15,28 @@
       </select>
     </div>
 
+    <!-- Reason for Adoption -->
     <div>
       <label for="id_reason_for_adoption">Reason for Adoption:</label>
       <textarea id="id_reason_for_adoption" name="reason_for_adoption" required>{{ form.reason_for_adoption.value }}</textarea>
     </div>
 
+    <!-- Status selection -->
     <div>
-      <button type="submit" class="btn btn-primary">Submit Application</button>
+      <label for="id_status">Status:</label>
+      <select id="id_status" name="status" required>
+        <option value="Pending" {% if form.status.value == "Pending" %}selected{% endif %}>Pending</option>
+        <option value="Approved" {% if form.status.value == "Approved" %}selected{% endif %}>Approved</option>
+        <option value="Rejected" {% if form.status.value == "Rejected" %}selected{% endif %}>Rejected</option>
+      </select>
+    </div>
+
+    <!-- Submit button -->
+    <div>
+      <button type="submit" class="btn btn-primary">Update Application</button>
     </div>
   </form>
 
+  <!-- Back to list button -->
   <a href="{% url 'adoption_application_list' %}" class="btn btn-secondary mt-3">Back to Applications List</a>
 {% endblock content %}
